@@ -110,6 +110,30 @@ textarea:focus{border-color:rgba(124,92,255,.55);box-shadow:0 0 0 4px rgba(124,9
   background:linear-gradient(135deg,#8b6cff,#5b3df0);box-shadow:0 6px 16px rgba(91,61,240,.45);transition:transform .15s,opacity .2s}
 #send svg{width:20px;height:20px;transform:scaleX(-1) translateX(1px)}
 #send:active{transform:scale(.88)}#send:disabled{opacity:.5}
+/* ===== رسانه ===== */
+#clip{display:none;width:44px;height:44px;flex:none;border-radius:50%;place-items:center;font-size:21px;padding:0;color:var(--accent);transition:transform .15s,background .15s}
+#clip:active{transform:scale(.88);background:rgba(124,92,255,.16)}
+#att{display:none;align-items:center;gap:10px;padding:8px 12px;background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-top:1px solid var(--glass-b);font-size:13px;animation:up .2s ease;position:relative;z-index:1}
+#att .th{width:42px;height:42px;border-radius:10px;flex:none;display:grid;place-items:center;font-size:22px;background:rgba(124,92,255,.14);background-size:cover;background-position:center;overflow:hidden}
+#att .tx{flex:1;min-width:0}#att .tx b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}#att .tx small{color:var(--hint)}
+#att .bar{height:4px;border-radius:4px;background:rgba(124,92,255,.18);margin-top:5px;overflow:hidden;display:none}#att .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#8b6cff,#ff7ac6);transition:width .15s}
+.media{margin:0 -6px 4px;border-radius:14px;overflow:hidden}
+.media.k-image,.media.k-video{background:rgba(0,0,0,.12);min-width:150px;min-height:110px;display:grid;place-items:center;font-size:12px;opacity:.95}
+.media img,.media video{display:block;max-width:100%;max-height:340px;width:auto;height:auto;margin:0 auto;border-radius:14px}
+.media img{cursor:zoom-in}
+.media audio{display:block;width:230px;max-width:100%;height:40px}
+.media.k-audio{margin:0 0 4px}
+.file{display:flex;align-items:center;gap:10px;min-width:190px;padding:4px 2px}
+.file .fi{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-size:20px;background:rgba(255,255,255,.22);flex:none}
+.ot .file .fi{background:rgba(124,92,255,.14)}
+.file .fn{flex:1;min-width:0}.file .fn b{display:block;font-weight:500;font-size:14px;word-break:break-all;line-height:1.5}.file .fn small{margin:0;text-align:right;direction:rtl}
+.file button{font-size:13px;font-weight:700;padding:7px 11px;border-radius:999px;background:rgba(255,255,255,.22)}.ot .file button{background:rgba(124,92,255,.14);color:var(--accent)}
+.spin{width:22px;height:22px;border-radius:50%;border:3px solid rgba(255,255,255,.35);border-top-color:#fff;animation:rot .8s linear infinite}
+.ot .spin{border-color:rgba(124,92,255,.25);border-top-color:var(--accent)}
+@keyframes rot{to{transform:rotate(360deg)}}
+#viewer{position:fixed;inset:0;z-index:8;background:rgba(5,3,15,.92);display:none;place-items:center;animation:fd .2s ease}
+#viewer img{max-width:100%;max-height:100%;object-fit:contain}
+#viewer button{position:absolute;top:calc(12px + env(safe-area-inset-top));right:14px;color:#fff;font-size:22px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.16)}
 #sheet{position:fixed;inset:0;background:rgba(10,6,30,.45);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);display:none;align-items:flex-end;z-index:5;animation:fd .2s ease}
 #sheet div{width:100%;background:var(--sheet);border-radius:26px 26px 0 0;padding:10px 12px calc(14px + env(safe-area-inset-bottom));animation:sl .28s cubic-bezier(.2,.9,.3,1);box-shadow:0 -10px 40px rgba(0,0,0,.25)}
 #sheet div::before{content:"";display:block;width:42px;height:4px;border-radius:4px;background:var(--hint);opacity:.35;margin:0 auto 8px}
@@ -127,7 +151,10 @@ textarea:focus{border-color:rgba(124,92,255,.55);box-shadow:0 0 0 4px rgba(124,9
 <div id="sel"><button class="ic" id="selx">✕</button><b id="selc">۰ انتخاب</b><button class="ic" id="seld">🗑</button></div>
 <div id="list"><div class="empty">در حال بارگذاری…</div></div>
 <div id="rep"><span id="reptx"></span><button class="ic" id="repx">✕</button></div>
-<footer><textarea id="inp" rows="1" maxlength="1000" placeholder="پیام…"></textarea><button id="send" aria-label="ارسال"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.4 20.4l17.45-7.48a1 1 0 0 0 0-1.84L3.4 3.6a.99.99 0 0 0-1.39.91L2 9.12c0 .5.37.93.87.99L17 12 2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91z"/></svg></button></footer>
+<div id="att"><div class="th" id="atth">📎</div><div class="tx"><b id="attn"></b><small id="atts"></small><div class="bar" id="attb"><i></i></div></div><button class="ic" id="attx">✕</button></div>
+<input type="file" id="file" hidden>
+<div id="viewer"><button id="vx">✕</button><img id="vimg" alt=""></div>
+<footer><button id="clip" aria-label="پیوست">📎</button><textarea id="inp" rows="1" maxlength="1000" placeholder="پیام…"></textarea><button id="send" aria-label="ارسال"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.4 20.4l17.45-7.48a1 1 0 0 0 0-1.84L3.4 3.6a.99.99 0 0 0-1.39.91L2 9.12c0 .5.37.93.87.99L17 12 2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91z"/></svg></button></footer>
 <div id="sheet"><div><button id="a-reply">↩️ پاسخ</button><button id="a-del">🗑 حذف دوطرفه</button><button id="a-sel">☑️ انتخاب</button></div></div>
 <div id="msg"></div>
 <script>
@@ -157,24 +184,73 @@ async function api(act, body) {
   if (!r.ok) throw Object.assign(new Error("http"), { data: j });
   return j;
 }
+// ───── رسانه ─────
+const rows = new Map(); // id → عنصر ردیف (رندر افزایشی؛ تا پخش‌کننده‌ها با هر آپدیت ریست نشن)
+const blobs = new Map(); // id → Promise<objectURL>
+let canMedia = false, maxFile = 20 * 1024 * 1024, pending = null, upBusy = false;
+const KI = { image: "🖼", video: "🎬", audio: "🎵", file: "📎" };
+const KN = { image: "عکس", video: "ویدیو", audio: "آهنگ", file: "فایل" };
+const fsz = (n) => n >= 1048576 ? fa((n / 1048576).toFixed(1)) + " مگابایت" : fa(Math.max(1, Math.round(n / 1024))) + " کیلوبایت";
+const preview = (m) => !m ? "پیام حذف‌شده" : m.kind ? (KI[m.kind] || "📎") + " " + (m.text || m.fname || KN[m.kind]) : m.text;
+function stick() { const el = $("list"); if (el.scrollHeight - el.scrollTop - el.clientHeight < 420) el.scrollTop = el.scrollHeight; }
+async function apiBlob(act, body) {
+  const r = await fetch(API + act, { method: "POST", headers: { "content-type": "application/json", "x-tg-init": tg ? tg.initData : "" }, body: JSON.stringify(Object.assign({ code }, body || {})) });
+  if (!r.ok) throw new Error("file");
+  return await r.blob();
+}
+function blobUrl(id) { if (!blobs.has(id)) blobs.set(id, apiBlob("file", { id }).then((b) => URL.createObjectURL(b)).catch((e) => { blobs.delete(id); throw e; })); return blobs.get(id); }
+function saveFile(m) { blobUrl(m.id).then((u) => { const a = document.createElement("a"); a.href = u; a.download = m.fname || "file"; document.body.appendChild(a); a.click(); a.remove(); }).catch(() => tg && tg.showAlert("دانلود نشد؛ دوباره امتحان کن")); }
+function openViewer(u) { $("vimg").src = u; $("viewer").style.display = "grid"; }
+function mediaNode(m) {
+  const w = document.createElement("div"); w.className = "media k-" + m.kind;
+  if (m.kind === "file") {
+    w.className = "file";
+    const i = document.createElement("div"); i.className = "fi"; i.textContent = "📄";
+    const n = document.createElement("div"); n.className = "fn"; const nb = document.createElement("b"); nb.textContent = m.fname || "فایل"; const ns = document.createElement("small"); ns.textContent = fsz(m.fsize || 0); n.append(nb, ns);
+    const bt = document.createElement("button"); bt.textContent = "⬇️ دانلود"; bt.onclick = (e) => { e.stopPropagation(); bt.textContent = "…"; saveFile(m); setTimeout(() => (bt.textContent = "⬇️ دانلود"), 1500); };
+    w.append(i, n, bt); return w;
+  }
+  const load = () => {
+    w.textContent = ""; const sp = document.createElement("div"); sp.className = "spin"; w.appendChild(sp);
+    blobUrl(m.id).then((u) => {
+      let el;
+      if (m.kind === "image") { el = document.createElement("img"); el.onclick = (e) => { e.stopPropagation(); openViewer(u); }; el.onload = stick; }
+      else { el = document.createElement(m.kind === "video" ? "video" : "audio"); el.controls = true; el.preload = "metadata"; if (m.kind === "video") { el.playsInline = true; el.onloadedmetadata = stick; } w.onclick = (e) => e.stopPropagation(); }
+      el.src = u; w.textContent = ""; w.appendChild(el); if (m.kind !== "audio") { w.style.minHeight = "0"; w.style.display = "block"; }
+    }).catch(() => { w.textContent = "⚠️ بارگذاری نشد؛ بزن تا دوباره تلاش کنه"; w.onclick = (e) => { e.stopPropagation(); load(); }; });
+  };
+  load(); return w;
+}
+function buildRow(m) {
+  const row = document.createElement("div"); row.className = "row " + (m.from === me ? "me" : "ot") + (seen.has(m.id) ? "" : " in");
+  seen.add(m.id);
+  const b = document.createElement("div"); b.className = "b";
+  if (m.reply_to) { const q = document.createElement("div"); q.className = "q"; b.appendChild(q); row._q = q; }
+  if (m.kind) b.appendChild(mediaNode(m));
+  if (m.text) b.appendChild(document.createTextNode(m.text));
+  const s = document.createElement("small"); s.textContent = hhmm(m.ts); b.appendChild(s);
+  b.onclick = () => (selMode ? toggle(m.id) : openSheet(m.id));
+  row.appendChild(b); return row;
+}
 function render(keepBottom) {
   const el = $("list"), nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 120;
-  el.textContent = "";
   if (!msgs.size) {
+    rows.clear(); el.textContent = "";
     const e = document.createElement("div"); e.className = "empty";
     const lk = document.createElement("div"); lk.className = "lk"; lk.textContent = "🔒"; e.appendChild(lk);
     e.appendChild(document.createTextNode("هنوز پیامی نیست.\nاولین پیام رو بفرست 👇"));
     el.appendChild(e); return;
   }
+  el.querySelectorAll(".empty").forEach((x) => x.remove());
+  for (const [id, row] of rows) if (!msgs.has(id)) { row.remove(); rows.delete(id); }
+  let i = 0;
   for (const m of [...msgs.values()].sort((a, b) => a.id - b.id)) {
-    const row = document.createElement("div"); row.className = "row " + (m.from === me ? "me" : "ot") + (picking.has(m.id) ? " pick" : "") + (seen.has(m.id) ? "" : " in");
-    seen.add(m.id);
-    const b = document.createElement("div"); b.className = "b";
-    if (m.reply_to) { const q = document.createElement("div"); q.className = "q"; const r = msgs.get(m.reply_to); q.textContent = r ? r.text : "پیام حذف‌شده"; b.appendChild(q); }
-    b.appendChild(document.createTextNode(m.text));
-    const s = document.createElement("small"); s.textContent = hhmm(m.ts); b.appendChild(s);
-    b.onclick = () => (selMode ? toggle(m.id) : openSheet(m.id));
-    row.appendChild(b); el.appendChild(row);
+    let row = rows.get(m.id);
+    if (!row) { row = buildRow(m); rows.set(m.id, row); }
+    if (el.children[i] !== row) el.insertBefore(row, el.children[i] || null);
+    row.classList.toggle("pick", picking.has(m.id));
+    if (row._q) row._q.textContent = preview(msgs.get(m.reply_to));
+    i++;
   }
   if (keepBottom || nearBottom) el.scrollTop = el.scrollHeight;
 }
@@ -183,11 +259,12 @@ function closeSheet() { $("sheet").style.display = "none"; }
 function toggle(id) { picking.has(id) ? picking.delete(id) : picking.add(id); if (!picking.size) exitSel(); else updSel(); render(); }
 function updSel() { $("sel").style.display = "flex"; $("selc").textContent = fa(picking.size) + " انتخاب"; }
 function exitSel() { selMode = false; picking.clear(); $("sel").style.display = "none"; render(); }
-function setReply(id) { replyTo = id; const m = msgs.get(id); $("rep").style.display = "flex"; $("reptx").textContent = "↩️ " + (m ? m.text : ""); $("inp").focus(); }
+function setReply(id) { replyTo = id; const m = msgs.get(id); $("rep").style.display = "flex"; $("reptx").textContent = "↩️ " + (m ? preview(m) : ""); $("inp").focus(); }
 function clearReply() { replyTo = null; $("rep").style.display = "none"; }
 function confirmBox(text, ok) { if (tg && tg.showConfirm) tg.showConfirm(text, (y) => y && ok()); else if (confirm(text)) ok(); }
 function absorb(j, first) {
   if (j.me) me = j.me;
+  if (first) { canMedia = !!j.media; if (j.maxfile) maxFile = j.maxfile; $("clip").style.display = canMedia ? "grid" : "none"; }
   if (j.other && first) { $("name").textContent = j.other.name; $("av").textContent = (j.other.name || "؟").trim().charAt(0); }
   if (j.ids) { const keep = new Set(j.ids), oldest = j.ids.length ? Math.min(...j.ids) : 0; for (const id of [...msgs.keys()]) if (!keep.has(id) && (j.ids.length < 400 || id >= oldest)) msgs.delete(id); }
   for (const m of j.msgs || []) { msgs.set(m.id, m); if (m.id > lastId) lastId = m.id; }
@@ -197,7 +274,45 @@ async function poll() {
   if (dead || busy || document.hidden) return;
   try { const j = await api("poll", { since: lastId }); const n = msgs.size; absorb(j); render(); if (tg && j.msgs && j.msgs.some((m) => m.from !== me) && n !== msgs.size) { try { tg.HapticFeedback.impactOccurred("light"); } catch (e) {} } } catch (e) {}
 }
+// ───── انتخاب و ارسال فایل ─────
+function setPending(f) {
+  pending = f; const a = $("att");
+  if (!f) { a.style.display = "none"; $("atth").style.backgroundImage = ""; $("attb").style.display = "none"; return; }
+  $("attn").textContent = f.name || "فایل"; $("atts").textContent = fsz(f.size);
+  const th = $("atth"); th.style.backgroundImage = ""; th.textContent = f.type.startsWith("audio/") ? "🎵" : f.type.startsWith("video/") ? "🎬" : "📄";
+  if (f.type.startsWith("image/")) { th.textContent = ""; th.style.backgroundImage = "url(" + URL.createObjectURL(f) + ")"; }
+  a.style.display = "flex"; $("inp").placeholder = "توضیح (اختیاری)…"; $("inp").focus();
+}
+function clearPending() { setPending(null); $("file").value = ""; $("inp").placeholder = "پیام…"; }
+$("clip").onclick = () => { if (!busy && !dead) $("file").click(); };
+$("file").onchange = (e) => {
+  const f = e.target.files && e.target.files[0]; if (!f) return;
+  if (f.size > maxFile) { tg ? tg.showAlert("حجم فایل نباید بیشتر از " + fsz(maxFile) + " باشه") : alert("فایل بزرگه"); e.target.value = ""; return; }
+  setPending(f);
+};
+$("attx").onclick = () => { if (!busy) clearPending(); };
+$("vx").onclick = () => { $("viewer").style.display = "none"; $("vimg").src = ""; };
+$("viewer").onclick = (e) => { if (e.target.id === "viewer") $("vx").onclick(); };
+function sendFile() {
+  const f = pending, cap = $("inp").value.trim();
+  busy = true; $("send").disabled = true; $("attb").style.display = "block"; const bar = $("attb").firstElementChild; bar.style.width = "0";
+  const fail = (er) => { busy = false; $("send").disabled = false; $("attb").style.display = "none"; if (!dead && tg) tg.showAlert(er === "rate" ? "یکم آروم‌تر 😅 چند ثانیه صبر کن" : er === "big" ? "حجم فایل زیاده" : er === "media_off" ? "ارسال فایل فعال نیست" : "ارسال نشد؛ دوباره امتحان کن"); };
+  const fd = new FormData(); fd.append("code", code); fd.append("text", cap); if (replyTo) fd.append("reply_to", replyTo); fd.append("file", f, f.name || "file");
+  const x = new XMLHttpRequest(); x.open("POST", API + "upload"); x.setRequestHeader("x-tg-init", tg ? tg.initData : "");
+  x.upload.onprogress = (e) => { if (e.lengthComputable) bar.style.width = Math.round((e.loaded / e.total) * 100) + "%"; };
+  x.onerror = () => fail("");
+  x.onload = () => {
+    let j = {}; try { j = JSON.parse(x.responseText); } catch (e) {}
+    if (x.status === 401) return end("⚠️ این صفحه رو فقط از داخل تلگرام و با دکمه‌ی «نمایش چت» باز کن.");
+    if (x.status === 404) return end("🗑 این چت مخفی حذف شده یا برای تو نیست.");
+    if (x.status !== 200 || !j.msg) return fail(j.error);
+    msgs.set(j.msg.id, j.msg); if (j.msg.id > lastId) lastId = j.msg.id;
+    $("inp").value = ""; $("inp").style.height = ""; clearReply(); clearPending(); busy = false; $("send").disabled = false; render(true);
+  };
+  x.send(fd);
+}
 async function send() {
+  if (pending && !busy && !dead) return sendFile();
   const t = $("inp").value.trim(); if (!t || busy || dead) return;
   busy = true; $("send").disabled = true;
   try { const j = await api("send", { text: t, reply_to: replyTo }); msgs.set(j.msg.id, j.msg); if (j.msg.id > lastId) lastId = j.msg.id; $("inp").value = ""; $("inp").style.height = ""; clearReply(); render(true); }
