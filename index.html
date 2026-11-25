@@ -5,52 +5,147 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>چت مخفی</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:var(--tg-theme-bg-color,#fff);--tx:var(--tg-theme-text-color,#111);--hint:var(--tg-theme-hint-color,#8a8a8a);--btn:var(--tg-theme-button-color,#6c4cf1);--btx:var(--tg-theme-button-text-color,#fff);--sec:var(--tg-theme-secondary-bg-color,#f1f1f5);--mine:#6c4cf1;--mine-tx:#fff;--oth:var(--tg-theme-secondary-bg-color,#eee)}
+:root{
+  --bg1:#f4eeff;--bg2:#e4ecff;--bg3:#ffe9f3;
+  --orb1:#a78bfa;--orb2:#60a5fa;--orb3:#f9a8d4;
+  --doodle:#6c4cf1;--doodle-op:.07;
+  --glass:rgba(255,255,255,.72);--glass-b:rgba(255,255,255,.7);
+  --tx:#1d1b2e;--hint:#7b7893;
+  --mine-a:#7c5cff;--mine-b:#5b3df0;--mine-tx:#fff;
+  --oth:rgba(255,255,255,.92);--oth-tx:#1d1b2e;--oth-b:rgba(108,76,241,.08);
+  --accent:#6c4cf1;--danger:#e5484d;
+  --shadow:0 4px 14px rgba(70,40,160,.12);
+  --input:rgba(255,255,255,.9);--sheet:#fff;--sel:#6c4cf1;
+}
+:root[data-theme="dark"]{
+  --bg1:#14102b;--bg2:#0d1730;--bg3:#25102b;
+  --orb1:#6d4cff;--orb2:#1d6fe0;--orb3:#c2338f;
+  --doodle:#c7b8ff;--doodle-op:.06;
+  --glass:rgba(28,24,56,.7);--glass-b:rgba(255,255,255,.08);
+  --tx:#f1efff;--hint:#9d9ac0;
+  --mine-a:#8366ff;--mine-b:#5a3ee6;--mine-tx:#fff;
+  --oth:rgba(44,39,82,.92);--oth-tx:#f1efff;--oth-b:rgba(255,255,255,.07);
+  --accent:#9b84ff;--danger:#ff6b70;
+  --shadow:0 4px 16px rgba(0,0,0,.35);
+  --input:rgba(40,35,76,.92);--sheet:#1e1a3d;--sel:#5a3ee6;
+}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;margin:0}
-body{font-family:Vazirmatn,Tahoma,system-ui,sans-serif;background:var(--bg);color:var(--tx);display:flex;flex-direction:column;overflow:hidden}
-header{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--sec);border-bottom:1px solid #00000014}
-header .av{width:38px;height:38px;border-radius:50%;background:var(--btn);color:var(--btx);display:grid;place-items:center;font-weight:700}
-header .t{flex:1;min-width:0}header .t b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}header .t small{color:var(--hint)}
+body{
+  font-family:Vazirmatn,Tahoma,system-ui,sans-serif;color:var(--tx);
+  display:flex;flex-direction:column;overflow:hidden;position:relative;
+  background:linear-gradient(160deg,var(--bg1),var(--bg2) 55%,var(--bg3));
+}
+/* ===== پس‌زمینه ===== */
+#bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+#bg .orb{position:absolute;border-radius:50%;filter:blur(60px);opacity:.55;will-change:transform}
+#bg .o1{width:300px;height:300px;background:var(--orb1);top:-80px;right:-70px;animation:fl1 18s ease-in-out infinite alternate}
+#bg .o2{width:340px;height:340px;background:var(--orb2);bottom:8%;left:-120px;animation:fl2 22s ease-in-out infinite alternate}
+#bg .o3{width:260px;height:260px;background:var(--orb3);top:42%;right:-90px;opacity:.4;animation:fl3 26s ease-in-out infinite alternate}
+#bg .doodle{position:absolute;inset:0;opacity:var(--doodle-op);color:var(--doodle);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='18' y='26' width='16' height='12' rx='3'/%3E%3Cpath d='M21 26v-4a5 5 0 0 1 10 0v4'/%3E%3Cpath d='M98 20l2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9-4.3-4.1 5.9-.8z'/%3E%3Cpath d='M126 74a8 8 0 1 0 8 10a6.5 6.5 0 0 1-8-10z'/%3E%3Cpath d='M30 96c0-6 5-10 11-10s11 4 11 10-5 10-11 10h-3l-6 5v-6c-1-2-2-5-2-9z'/%3E%3Ccircle cx='86' cy='110' r='3'/%3E%3Ccircle cx='140' cy='30' r='2'/%3E%3Cpath d='M70 62l3 3m0-3l-3 3'/%3E%3Cpath d='M20 146h6m-3-3v6'/%3E%3Cpath d='M112 140c3-4 6-4 9 0s6 4 9 0'/%3E%3C/svg%3E");
+  -webkit-mask-image:linear-gradient(#000,#000);mask-image:linear-gradient(#000,#000)}
+:root[data-theme="dark"] #bg .doodle{filter:invert(1)}
+@keyframes fl1{to{transform:translate(-60px,90px) scale(1.15)}}
+@keyframes fl2{to{transform:translate(90px,-80px) scale(1.1)}}
+@keyframes fl3{to{transform:translate(-70px,-60px) scale(1.2)}}
+@media (prefers-reduced-motion:reduce){#bg .orb{animation:none}}
+/* ===== اجزا ===== */
 button{font:inherit;border:0;background:none;color:inherit;cursor:pointer}
-.ic{font-size:20px;padding:6px 8px;border-radius:10px}.ic:active{background:#00000014}
-#sel{display:none;align-items:center;gap:8px;padding:10px 14px;background:var(--btn);color:var(--btx)}#sel b{flex:1}
-#list{flex:1;overflow-y:auto;padding:12px 10px 6px;display:flex;flex-direction:column;gap:6px;overscroll-behavior:contain}
+header,#sel,#list,#rep,footer{position:relative;z-index:1}
+header{display:flex;align-items:center;gap:11px;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;
+  background:var(--glass);-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4);
+  border-bottom:1px solid var(--glass-b);box-shadow:0 2px 18px rgba(70,40,160,.08)}
+.av{width:42px;height:42px;border-radius:50%;flex:none;display:grid;place-items:center;font-weight:700;font-size:18px;color:#fff;
+  background:linear-gradient(135deg,#9b7bff,#5b3df0 60%,#ff7ac6);box-shadow:0 0 0 3px rgba(124,92,255,.22),0 4px 12px rgba(91,61,240,.35)}
+header .t{flex:1;min-width:0}
+header .t b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:16px;font-weight:700}
+header .t small{display:flex;align-items:center;gap:5px;color:var(--hint);font-size:12px;margin-top:1px}
+header .t small i{width:7px;height:7px;border-radius:50%;background:#34d399;box-shadow:0 0 0 3px rgba(52,211,153,.2);animation:pl 2.4s ease-in-out infinite}
+@keyframes pl{50%{box-shadow:0 0 0 5px rgba(52,211,153,.05)}}
+#menu{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:700;color:var(--danger);
+  padding:8px 13px;border-radius:999px;background:rgba(229,72,77,.1);border:1px solid rgba(229,72,77,.22);transition:transform .15s,background .15s}
+#menu:active{transform:scale(.94);background:rgba(229,72,77,.2)}
+.ic{font-size:20px;padding:6px 9px;border-radius:12px;transition:background .15s}
+.ic:active{background:rgba(255,255,255,.22)}
+#sel{display:none;align-items:center;gap:8px;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;
+  background:linear-gradient(135deg,var(--mine-a),var(--sel));color:#fff;box-shadow:0 4px 18px rgba(91,61,240,.35);animation:dn .22s ease}
+#sel b{flex:1;font-weight:700}
+@keyframes dn{from{transform:translateY(-100%);opacity:0}}
+#list{flex:1;overflow-y:auto;padding:14px 12px 8px;display:flex;flex-direction:column;gap:7px;overscroll-behavior:contain;scroll-behavior:smooth}
+#list::-webkit-scrollbar{width:0}
 .row{display:flex}.row.me{justify-content:flex-start}.row.ot{justify-content:flex-end}
-.b{max-width:82%;padding:7px 11px 5px;border-radius:16px;white-space:pre-wrap;word-break:break-word;line-height:1.7;position:relative}
-.me .b{background:var(--mine);color:var(--mine-tx);border-bottom-right-radius:5px}
-.ot .b{background:var(--oth);border-bottom-left-radius:5px}
-.b small{display:block;font-size:11px;opacity:.65;margin-top:2px;text-align:left;direction:ltr}
-.q{border-right:3px solid currentColor;padding:2px 8px;margin:0 0 4px;opacity:.8;font-size:13px;background:#00000014;border-radius:6px;max-height:44px;overflow:hidden}
-.row.pick .b{outline:3px solid #ffb703}
-.empty{margin:auto;color:var(--hint);text-align:center;line-height:2}
-#rep{display:none;align-items:center;gap:8px;padding:6px 12px;background:var(--sec);border-top:1px solid #00000014;font-size:13px}#rep span{flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:var(--hint)}
-footer{display:flex;gap:8px;align-items:flex-end;padding:8px 10px calc(8px + env(safe-area-inset-bottom));background:var(--bg);border-top:1px solid #00000014}
-textarea{flex:1;resize:none;max-height:120px;min-height:42px;padding:10px 14px;border-radius:21px;border:1px solid #00000022;background:var(--sec);color:var(--tx);font:inherit;outline:none;line-height:1.5}
-#send{width:42px;height:42px;border-radius:50%;background:var(--btn);color:var(--btx);font-size:18px;flex:none}#send:disabled{opacity:.5}
-#sheet{position:fixed;inset:0;background:#0006;display:none;align-items:flex-end;z-index:5}
-#sheet div{width:100%;background:var(--bg);border-radius:18px 18px 0 0;padding:8px 8px calc(10px + env(safe-area-inset-bottom))}
-#sheet button{display:block;width:100%;text-align:right;padding:14px 16px;font-size:16px;border-radius:12px}#sheet button:active{background:var(--sec)}
-#msg{position:fixed;inset:0;display:none;place-items:center;text-align:center;background:var(--bg);z-index:9;padding:24px;line-height:2}
+.row.in .b{animation:pop .28s cubic-bezier(.2,.9,.3,1.2) both}
+.row.in.me .b{transform-origin:bottom right}.row.in.ot .b{transform-origin:bottom left}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.88)}}
+.b{max-width:82%;padding:8px 13px 6px;border-radius:19px;white-space:pre-wrap;word-break:break-word;line-height:1.75;font-size:15px;position:relative;box-shadow:var(--shadow);transition:transform .12s,box-shadow .2s}
+.b:active{transform:scale(.985)}
+.me .b{background:linear-gradient(145deg,var(--mine-a),var(--mine-b));color:var(--mine-tx);border-bottom-right-radius:6px}
+.ot .b{background:var(--oth);color:var(--oth-tx);border:1px solid var(--oth-b);border-bottom-left-radius:6px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.b small{display:block;font-size:10.5px;opacity:.6;margin-top:1px;text-align:left;direction:ltr}
+.q{border-right:3px solid currentColor;padding:3px 9px;margin:0 0 6px;opacity:.85;font-size:13px;line-height:1.6;background:rgba(0,0,0,.1);border-radius:8px;max-height:46px;overflow:hidden}
+.ot .q{background:rgba(108,76,241,.09);color:var(--accent);border-color:var(--accent)}
+.ot .q{color:var(--oth-tx)}
+.row.pick .b{outline:2.5px solid #ffb703;outline-offset:2px;box-shadow:0 0 0 6px rgba(255,183,3,.18),var(--shadow)}
+.empty{margin:auto;color:var(--hint);text-align:center;line-height:2;font-size:14px;padding:26px 28px;border-radius:24px;
+  background:var(--glass);border:1px solid var(--glass-b);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:var(--shadow);animation:pop .4s ease both}
+.empty .lk{width:64px;height:64px;margin:0 auto 6px;border-radius:50%;display:grid;place-items:center;font-size:30px;
+  background:linear-gradient(135deg,#9b7bff,#5b3df0);box-shadow:0 8px 22px rgba(91,61,240,.4)}
+#rep{display:none;align-items:center;gap:8px;padding:7px 12px;background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+  border-top:1px solid var(--glass-b);font-size:13px;animation:up .2s ease}
+#rep::before{content:"";width:3px;align-self:stretch;border-radius:3px;background:var(--accent)}
+#rep span{flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:var(--hint)}
+@keyframes up{from{transform:translateY(10px);opacity:0}}
+footer{display:flex;gap:9px;align-items:flex-end;padding:9px 11px calc(9px + env(safe-area-inset-bottom));
+  background:var(--glass);-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4);border-top:1px solid var(--glass-b)}
+textarea{flex:1;resize:none;max-height:120px;min-height:44px;padding:11px 16px;border-radius:22px;border:1.5px solid transparent;
+  background:var(--input);color:var(--tx);font:inherit;font-size:15px;outline:none;line-height:1.5;box-shadow:inset 0 1px 3px rgba(0,0,0,.06);transition:border-color .2s,box-shadow .2s}
+textarea::placeholder{color:var(--hint)}
+textarea:focus{border-color:rgba(124,92,255,.55);box-shadow:0 0 0 4px rgba(124,92,255,.14)}
+#send{width:44px;height:44px;border-radius:50%;flex:none;display:grid;place-items:center;color:#fff;
+  background:linear-gradient(135deg,#8b6cff,#5b3df0);box-shadow:0 6px 16px rgba(91,61,240,.45);transition:transform .15s,opacity .2s}
+#send svg{width:20px;height:20px;transform:scaleX(-1) translateX(1px)}
+#send:active{transform:scale(.88)}#send:disabled{opacity:.5}
+#sheet{position:fixed;inset:0;background:rgba(10,6,30,.45);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);display:none;align-items:flex-end;z-index:5;animation:fd .2s ease}
+#sheet div{width:100%;background:var(--sheet);border-radius:26px 26px 0 0;padding:10px 12px calc(14px + env(safe-area-inset-bottom));animation:sl .28s cubic-bezier(.2,.9,.3,1);box-shadow:0 -10px 40px rgba(0,0,0,.25)}
+#sheet div::before{content:"";display:block;width:42px;height:4px;border-radius:4px;background:var(--hint);opacity:.35;margin:0 auto 8px}
+#sheet button{display:block;width:100%;text-align:right;padding:15px 16px;font-size:16px;border-radius:14px;transition:background .15s}
+#sheet button:active{background:rgba(124,92,255,.14)}
+#sheet #a-del{color:var(--danger)}
+@keyframes sl{from{transform:translateY(100%)}}@keyframes fd{from{opacity:0}}
+#msg{position:fixed;inset:0;display:none;place-items:center;text-align:center;z-index:9;padding:24px;line-height:2.2;font-size:16px;
+  background:linear-gradient(160deg,var(--bg1),var(--bg2) 55%,var(--bg3))}
 </style>
 </head>
 <body>
-<header><div class="av" id="av">🔒</div><div class="t"><b id="name">چت مخفی</b><small>🔒 فقط شما دو نفر</small></div><button class="ic" id="menu" style="font-size:14px;color:#e5484d;font-weight:700">🔚 پایان چت</button></header>
+<div id="bg" aria-hidden="true"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div class="doodle"></div></div>
+<header><div class="av" id="av">🔒</div><div class="t"><b id="name">چت مخفی</b><small><i></i>فقط شما دو نفر 🔒</small></div><button class="ic" id="menu">🔚 پایان چت</button></header>
 <div id="sel"><button class="ic" id="selx">✕</button><b id="selc">۰ انتخاب</b><button class="ic" id="seld">🗑</button></div>
 <div id="list"><div class="empty">در حال بارگذاری…</div></div>
 <div id="rep"><span id="reptx"></span><button class="ic" id="repx">✕</button></div>
-<footer><textarea id="inp" rows="1" maxlength="1000" placeholder="پیام…"></textarea><button id="send">➤</button></footer>
+<footer><textarea id="inp" rows="1" maxlength="1000" placeholder="پیام…"></textarea><button id="send" aria-label="ارسال"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.4 20.4l17.45-7.48a1 1 0 0 0 0-1.84L3.4 3.6a.99.99 0 0 0-1.39.91L2 9.12c0 .5.37.93.87.99L17 12 2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91z"/></svg></button></footer>
 <div id="sheet"><div><button id="a-reply">↩️ پاسخ</button><button id="a-del">🗑 حذف دوطرفه</button><button id="a-sel">☑️ انتخاب</button></div></div>
 <div id="msg"></div>
 <script>
 // آدرس API (همون تابع telegram-bot). اگه پروژه‌ی Supabase عوض شد، فقط همین خط رو عوض کن.
 const API = "https://hqsjoolraxqftnzypyuz.supabase.co/functions/v1/telegram-bot/sc/";
 const tg = window.Telegram && Telegram.WebApp;
-if (tg) { tg.ready(); tg.expand(); try { tg.setHeaderColor("secondary_bg_color"); } catch (e) {} }
+// تم روشن/تاریک بر اساس تلگرام (یا سیستم)
+(function () {
+  const dark = tg && tg.colorScheme ? tg.colorScheme === "dark" : window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.dataset.theme = dark ? "dark" : "light";
+  if (tg && tg.onEvent) tg.onEvent("themeChanged", () => { document.documentElement.dataset.theme = tg.colorScheme === "dark" ? "dark" : "light"; hdrColor(); });
+})();
+function hdrColor() { try { const d = document.documentElement.dataset.theme === "dark"; tg.setHeaderColor(d ? "#14102b" : "#f4eeff"); tg.setBackgroundColor(d ? "#0d1730" : "#e4ecff"); } catch (e) {} }
+if (tg) { tg.ready(); tg.expand(); hdrColor(); }
 const $ = (id) => document.getElementById(id);
 const code = (tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param) || new URLSearchParams(location.search).get("code") || "";
 const msgs = new Map(); let me = 0, lastId = 0, replyTo = null, picking = new Set(), selMode = false, sheetId = null, dead = false, busy = false;
+const seen = new Set(); // پیام‌هایی که قبلا نمایش داده شدن (برای انیمیشن فقط پیام‌های جدید)
 const fa = (n) => String(n).replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹"[d]);
 const hhmm = (ts) => { const d = new Date(ts * 1000); return fa(String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0")); };
 function end(text) { dead = true; const m = $("msg"); m.textContent = text; m.style.display = "grid"; }
@@ -65,9 +160,15 @@ async function api(act, body) {
 function render(keepBottom) {
   const el = $("list"), nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 120;
   el.textContent = "";
-  if (!msgs.size) { const e = document.createElement("div"); e.className = "empty"; e.textContent = "هنوز پیامی نیست.\nاولین پیام رو بفرست 👇"; el.appendChild(e); return; }
+  if (!msgs.size) {
+    const e = document.createElement("div"); e.className = "empty";
+    const lk = document.createElement("div"); lk.className = "lk"; lk.textContent = "🔒"; e.appendChild(lk);
+    e.appendChild(document.createTextNode("هنوز پیامی نیست.\nاولین پیام رو بفرست 👇"));
+    el.appendChild(e); return;
+  }
   for (const m of [...msgs.values()].sort((a, b) => a.id - b.id)) {
-    const row = document.createElement("div"); row.className = "row " + (m.from === me ? "me" : "ot") + (picking.has(m.id) ? " pick" : "");
+    const row = document.createElement("div"); row.className = "row " + (m.from === me ? "me" : "ot") + (picking.has(m.id) ? " pick" : "") + (seen.has(m.id) ? "" : " in");
+    seen.add(m.id);
     const b = document.createElement("div"); b.className = "b";
     if (m.reply_to) { const q = document.createElement("div"); q.className = "q"; const r = msgs.get(m.reply_to); q.textContent = r ? r.text : "پیام حذف‌شده"; b.appendChild(q); }
     b.appendChild(document.createTextNode(m.text));
@@ -77,7 +178,7 @@ function render(keepBottom) {
   }
   if (keepBottom || nearBottom) el.scrollTop = el.scrollHeight;
 }
-function openSheet(id) { sheetId = id; $("sheet").style.display = "flex"; }
+function openSheet(id) { sheetId = id; $("sheet").style.display = "flex"; try { tg.HapticFeedback.selectionChanged(); } catch (e) {} }
 function closeSheet() { $("sheet").style.display = "none"; }
 function toggle(id) { picking.has(id) ? picking.delete(id) : picking.add(id); if (!picking.size) exitSel(); else updSel(); render(); }
 function updSel() { $("sel").style.display = "flex"; $("selc").textContent = fa(picking.size) + " انتخاب"; }
@@ -91,7 +192,7 @@ function absorb(j, first) {
   if (j.ids) { const keep = new Set(j.ids), oldest = j.ids.length ? Math.min(...j.ids) : 0; for (const id of [...msgs.keys()]) if (!keep.has(id) && (j.ids.length < 400 || id >= oldest)) msgs.delete(id); }
   for (const m of j.msgs || []) { msgs.set(m.id, m); if (m.id > lastId) lastId = m.id; }
 }
-async function load() { try { const j = await api("open"); absorb(j, true); render(true); } catch (e) { if (!dead) end("⚠️ خطا در بارگذاری؛ دوباره باز کن."); } }
+async function load() { try { const j = await api("open"); absorb(j, true); j.msgs && j.msgs.forEach((m) => seen.add(m.id)); render(true); } catch (e) { if (!dead) end("⚠️ خطا در بارگذاری؛ دوباره باز کن."); } }
 async function poll() {
   if (dead || busy || document.hidden) return;
   try { const j = await api("poll", { since: lastId }); const n = msgs.size; absorb(j); render(); if (tg && j.msgs && j.msgs.some((m) => m.from !== me) && n !== msgs.size) { try { tg.HapticFeedback.impactOccurred("light"); } catch (e) {} } } catch (e) {}
