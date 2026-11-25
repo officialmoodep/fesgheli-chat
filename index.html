@@ -196,25 +196,45 @@ function stick() { const el = $("list"); if (el.scrollHeight - el.scrollTop - el
 async function apiBlob(act, body) {
   const r = await fetch(API + act, { method: "POST", headers: { "content-type": "application/json", "x-tg-init": tg ? tg.initData : "" }, body: JSON.stringify(Object.assign({ code }, body || {})) });
   if (!r.ok) throw new Error("file");
-  return await r.blob();
+  const b = await r.blob();
+  const t = sniff(new Uint8Array(await b.slice(0, 16).arrayBuffer())); // نوع واقعی از روی بایت‌های فایل
+  return t && t !== b.type ? b.slice(0, b.size, t) : b;
+}
+function sniff(h) {
+  const s = (a, c) => String.fromCharCode.apply(null, Array.from(h.subarray(a, c)));
+  if (h[0] === 0xff && h[1] === 0xd8 && h[2] === 0xff) return "image/jpeg";
+  if (h[0] === 0x89 && s(1, 4) === "PNG") return "image/png";
+  if (s(0, 3) === "GIF") return "image/gif";
+  if (s(0, 4) === "RIFF" && s(8, 12) === "WEBP") return "image/webp";
+  if (s(4, 8) === "ftyp") { const br = s(8, 12); if (br === "avif" || br === "avis") return "image/avif"; if (/^(heic|heix|hevc|hevx|heim|heis|mif1|msf1)$/.test(br)) return "image/heic"; }
+  return "";
 }
 function blobUrl(id) { if (!blobs.has(id)) blobs.set(id, apiBlob("file", { id }).then((b) => URL.createObjectURL(b)).catch((e) => { blobs.delete(id); throw e; })); return blobs.get(id); }
 function saveFile(m) { blobUrl(m.id).then((u) => { const a = document.createElement("a"); a.href = u; a.download = m.fname || "file"; document.body.appendChild(a); a.click(); a.remove(); }).catch(() => tg && tg.showAlert("دانلود نشد؛ دوباره امتحان کن")); }
 function openViewer(u) { $("vimg").src = u; $("viewer").style.display = "grid"; }
 function mediaNode(m) {
   const w = document.createElement("div"); w.className = "media k-" + m.kind;
-  if (m.kind === "file") {
-    w.className = "file";
+  const fileCard = () => {
+    w.className = "file"; w.removeAttribute("style"); w.onclick = null; w.textContent = "";
     const i = document.createElement("div"); i.className = "fi"; i.textContent = "📄";
     const n = document.createElement("div"); n.className = "fn"; const nb = document.createElement("b"); nb.textContent = m.fname || "فایل"; const ns = document.createElement("small"); ns.textContent = fsz(m.fsize || 0); n.append(nb, ns);
     const bt = document.createElement("button"); bt.textContent = "⬇️ دانلود"; bt.onclick = (e) => { e.stopPropagation(); bt.textContent = "…"; saveFile(m); setTimeout(() => (bt.textContent = "⬇️ دانلود"), 1500); };
-    w.append(i, n, bt); return w;
-  }
+    w.append(i, n, bt);
+  };
+  if (m.kind === "file") { fileCard(); return w; }
   const load = () => {
     w.textContent = ""; const sp = document.createElement("div"); sp.className = "spin"; w.appendChild(sp);
     blobUrl(m.id).then((u) => {
       let el;
-      if (m.kind === "image") { el = document.createElement("img"); el.onclick = (e) => { e.stopPropagation(); openViewer(u); }; el.onload = stick; }
+      if (m.kind === "image") {
+        el = document.createElement("img"); el.alt = ""; el.onclick = (e) => { e.stopPropagation(); openViewer(el.src); }; el.onload = stick;
+        // اگه مرورگر عکس رو نتونست نشون بده: یه بار با data-URL امتحان می‌کنیم، بعد کارت دانلود نشون می‌دیم
+        el.onerror = () => {
+          if (el._t) { fileCard(); stick(); return; }
+          el._t = 1;
+          fetch(u).then((x) => x.blob()).then((bb) => { const fr = new FileReader(); fr.onload = () => { el.src = fr.result; }; fr.onerror = () => { fileCard(); stick(); }; fr.readAsDataURL(bb); }).catch(() => { fileCard(); stick(); });
+        };
+      }
       else { el = document.createElement(m.kind === "video" ? "video" : "audio"); el.controls = true; el.preload = "metadata"; if (m.kind === "video") { el.playsInline = true; el.onloadedmetadata = stick; } w.onclick = (e) => e.stopPropagation(); }
       el.src = u; w.textContent = ""; w.appendChild(el); if (m.kind !== "audio") { w.style.minHeight = "0"; w.style.display = "block"; }
     }).catch(() => { w.textContent = "⚠️ بارگذاری نشد؛ بزن تا دوباره تلاش کنه"; w.onclick = (e) => { e.stopPropagation(); load(); }; });
@@ -285,8 +305,20 @@ function setPending(f) {
 }
 function clearPending() { setPending(null); $("file").value = ""; $("inp").placeholder = "پیام…"; }
 $("clip").onclick = () => { if (!busy && !dead) $("file").click(); };
-$("file").onchange = (e) => {
-  const f = e.target.files && e.target.files[0]; if (!f) return;
+// عکس‌های HEIC/HEIF (آیفون و بعضی سامسونگ‌ها) رو اگه مرورگر بتونه بخونه، قبل از ارسال JPEG می‌کنیم
+async function prepImage(f) {
+  if (!(/heic|heif/i.test(f.type) || /\.(heic|heif)$/i.test(f.name || ""))) return f;
+  try {
+    const bm = await createImageBitmap(f), c = document.createElement("canvas"); c.width = bm.width; c.height = bm.height;
+    c.getContext("2d").drawImage(bm, 0, 0);
+    const bl = await new Promise((ok) => c.toBlob(ok, "image/jpeg", 0.92));
+    if (bl && bl.size) return new File([bl], (f.name || "photo").replace(/\.\w+$/, "") + ".jpg", { type: "image/jpeg" });
+  } catch (er) {}
+  return f;
+}
+$("file").onchange = async (e) => {
+  let f = e.target.files && e.target.files[0]; if (!f) return;
+  f = await prepImage(f);
   if (f.size > maxFile) { tg ? tg.showAlert("حجم فایل نباید بیشتر از " + fsz(maxFile) + " باشه") : alert("فایل بزرگه"); e.target.value = ""; return; }
   setPending(f);
 };
